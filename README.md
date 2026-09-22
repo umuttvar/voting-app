@@ -1,8 +1,35 @@
-# voting-app
+# Voting app on Kubernetes
 A voting app deployed on Kubernetes with 5 microservices. Jenkins run checks and ArgoCD handles automatic deployments.
 
+##Architecture
+- **Vote** - web UI where users voting
+- **Redis** - temporary queue that holds incoming votes
+- **Worker** - reads votes from redis, writes them to PostgreSQL service
+- **PostgreSQL** - database
+- **Result** - shows voting results
 
----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+## What I built
+
+- Wrote all Kubernetes files (Deployment, Service, StatefulSet, Secret) from scratch in `k8s/`
+- Used a StatefulSet with `volumeClaimTemplates` for PostgreSQL to guarantee persistent storage across Pod restarts
+- Used Kubernetes Secrets for database credentials, injected via `envFrom`
+- Connected services purely through Kubernetes DNS (Service names), no hardcoded IPs
+- Deployed everything to a local `kind` cluster with `kubectl apply -f k8s/`
+
+## Debugging highlights
+
+Real issues I hit and resolved while deploying:
+
+- **Disk full (ENOSPC)** — cleaned up unused Docker images/volumes with `docker system prune`
+- **StatefulSet CrashLoopBackOff** — traced to a stale PersistentVolumeClaim, fixed by deleting the Pod and PVC and letting the StatefulSet recreate them
+- **Worker stuck on "Waiting for db"** — used `kubectl logs`, `pg_isready`, and `getent hosts` to rule out network/DNS issues, then found the root cause: a password mismatch between my Secret and the value the worker image expects (found by reading the original project's `docker-stack.yml`)
+- **Stuck PVC in "Terminating"** — removed a leftover finalizer with `kubectl patch`
+
+## Tech stack
+
+Kubernetes · Docker · PostgreSQL · Redis · kubectl
+
+----------------------------------------------------------------------------------------------------------------------------
 
 # Kubernetes'te Oylama Uygulaması
 
