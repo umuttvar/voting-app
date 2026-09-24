@@ -7,6 +7,12 @@ A voting app deployed on Kubernetes with 5 microservices. Jenkins run checks and
 - **Worker** - reads votes from redis, writes them to PostgreSQL service
 - **PostgreSQL** - database
 - **Result** - shows voting results
+- **Prometheus** — monitoring
+
+##CI/CD 
+- **ArgoCD** watches the `k8s/` folder on GitHub and automatically
+  syncs any change to the cluster — no manual `kubectl apply`
+  needed after the initial setup
 
 ## What I built
 
@@ -15,6 +21,8 @@ A voting app deployed on Kubernetes with 5 microservices. Jenkins run checks and
 - Used Kubernetes Secrets for database credentials, injected via `envFrom`
 - Connected services purely through Kubernetes DNS (Service names), no hardcoded IPs
 - Deployed everything to a local `kind` cluster with `kubectl apply -f k8s/`
+- - Added a Jenkins pipeline for basic manifest validation
+
 
 ## Debugging highlights
 
@@ -27,7 +35,7 @@ Real issues I hit and resolved while deploying:
 
 ## Tech stack
 
-Kubernetes · Docker · PostgreSQL · Redis · kubectl
+Kubernetes · Docker · Jenkins · ArgoCD · Prometheus · PostgreSQL · Redis
 
 ----------------------------------------------------------------------------------------------------------------------------
 
@@ -44,6 +52,14 @@ Tüm servisler DockerHub üzerindeki voting-app image'larından çekildi, Docker
 - **Worker** — Redis'ten oyları okuyup PostgreSQL'e yazan servis
 - **PostgreSQL** — kalıcı veri deposu
 - **Result** — oylama sonuçlarının gösterildiği arayüz
+- **Prometheus** — izleme (monitoring)
+
+## CI/CD
+
+- **Jenkins**, her push'ta Kubernetes manifest'lerini doğruluyor
+- **ArgoCD**, GitHub'daki `k8s/` klasörünü izliyor, herhangi bir 
+  değişikliği otomatik olarak cluster'a uyguluyor (GitOps) — ilk 
+  kurulumdan sonra elle `kubectl apply` yapmaya gerek yok
 
 ## Neler yapıldı
 
@@ -52,6 +68,9 @@ Tüm servisler DockerHub üzerindeki voting-app image'larından çekildi, Docker
 - Veritabanı kimlik bilgilerini, Kubernetes Secret olarak sakladım, `envFrom` ile servislere enjekte ettim
 - Servislerin çökmesi durumunda sorun yaşanılmamaıs adına sabit IP yerine tamamen Kubernetes DNS'i üzerinden birbirine bağladım
 - Tüm sistemi, local bir `kind` cluster'ına, `kubectl apply -f k8s/` ile deploy ettim
+- ArgoCD'de, bu repoyu izleyen ve otomatik senkronize eden bir 
+  Application kurdum
+- Manifest'leri doğrulayan basit bir Jenkins pipeline'ı ekledim
 
 ## Karşılaştığım ve çözdüğüm gerçek sorunlar
 
@@ -63,4 +82,4 @@ Deploy sürecinde karşılaştığım ve çözdüğüm gerçek problemler:
 
 ## Kullanılan teknolojiler
 
-Kubernetes · Docker · PostgreSQL · Redis · kubectl
+Kubernetes · Docker · Jenkins · ArgoCD · Prometheus · PostgreSQL · Redis
