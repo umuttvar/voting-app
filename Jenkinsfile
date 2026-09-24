@@ -7,6 +7,7 @@ pipeline {
                 for f in k8s/*.yaml; do
                 echo "Kontrol edilyor; $f"
                 kubectl apply --dry-run=client -f "$f"
+                done
                 '''
             }
         }
