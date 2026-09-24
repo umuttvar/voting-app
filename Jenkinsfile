@@ -3,7 +3,11 @@ pipeline {
     stages {
         stage('YAML dogrulama') {
             steps {
-                sh 'for f in k8s/*.yaml; do echo "Kontrol ediliyor: $f"; done'
+                '''
+                for f in k8s/*.yaml; do
+                echo "Kontrol edilyor; $f"
+                kubectl apply --dry-run=client -f "$f"
+                '''
             }
         }
         stage('Kubectl dry-run') {
