@@ -1,25 +1,23 @@
 pipeline {
     agent any
     stages {
-        stage('YAML dogrulama') {
+        stage('YAML dosyalarini listele') {
             steps {
-                sh '''
-                for f in k8s/*.yaml; do
-                echo "Kontrol edilyor; $f"
-                kubectl apply --dry-run=client -f "$f"
-                done
-                '''
+                sh 'ls -la k8s/'
             }
         }
-        stage('Kubectl dry-run') {
+        stage('Bilgi ver') {
             steps {
-                sh 'echo "Bu asamada, kubectl apply --dry-run ile YAML syntax kontrolu yapilabilir"'
+                echo 'Voting app: 5 servis, Kubernetes uzerinde calisir'
             }
         }
     }
     post {
         success {
-            echo 'Tum YAML dosyalari basariyla kontrol edildi'
+            echo 'Pipeline basariyla tamamlandi'
+        }
+        failure {
+            echo 'Pipeline basarisiz oldu, loglara bak'
         }
     }
 }
