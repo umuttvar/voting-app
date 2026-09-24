@@ -1,7 +1,5 @@
 pipeline {
-    agent {
-        label 'voting-app-agent'
-    }
+    agent any
     stages {
         stage('YAML dogrulama') {
             steps {
